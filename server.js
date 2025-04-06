@@ -3,6 +3,7 @@ const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
 
+const { exec } = require("child_process");
 const app = express();
 const PORT = 9006;
 const secretsFile = "./secrets.json";
@@ -57,6 +58,9 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.listen(PORT,"0.0.0.0", () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+app.listen(PORT, "0.0.0.0", () => {
+    exec("curl -s ifconfig.me", (err, stdout) => {
+      const ip = (stdout || "127.0.0.1").trim();
+      console.log(`✅ Server running at: http://${ip}:${PORT}`);
+    });
+  });
